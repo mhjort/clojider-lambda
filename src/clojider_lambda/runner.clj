@@ -13,6 +13,7 @@
 (defonce client (AmazonS3Client.))
 
 (def buffer-size 20000)
+(def stored-objects (atom []))
 
 (defn- write-to-temp-file [csv]
   (let [temp-file (File/createTempFile "simulation" nil nil)]
@@ -23,6 +24,7 @@
 
 (defn- store-to-s3 [bucket s3-object-key csv]
   (let [temp-file (write-to-temp-file csv)]
+    (swap! stored-objects conj s3-object-key)
     (.putObject client bucket s3-object-key temp-file)))
 
 (defn- gatling-csv-writer [bucket idx result-lines]
@@ -36,6 +38,7 @@
       results)))
 
 (defn run-simulation [scenarios users & [options]]
+  (reset! stored-objects [])
   (let [start-time (LocalDateTime.)
         step-timeout (or (:timeout-in-ms options) 5000)
         result (simulation/run-scenarios {:runner (choose-runner scenarios users options)
@@ -44,6 +47,7 @@
         (report/create-result-lines start-time
                                     buffer-size
                                     result
-                                    (partial gatling-csv-writer "clojider-results"))))
+                                    (partial gatling-csv-writer "clojider-results"))
+        {:results @stored-objects}))
 
 
