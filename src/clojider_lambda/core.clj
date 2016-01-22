@@ -9,7 +9,10 @@
   (let [input (parse-stream (io/reader is) true)
         output (io/writer os)]
     (println "Running simulation with config" input)
-    (let [result (run-simulation (:scenarios input) (:users input) (:options input))]
+    (let [result (run-simulation
+                   (map #(eval (read-string %)) (:scenarios input))
+                   (:users input)
+                   (:options input))]
       (println "Returning result" result)
       (generate-stream result output)
       (.flush output))))
