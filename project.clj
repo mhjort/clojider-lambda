@@ -7,7 +7,7 @@
                  [uswitch/lambada "0.1.0"]
                  [com.amazonaws/aws-java-sdk-s3 "1.10.37"]
                  [cheshire "5.5.0"]
-                 [clj-gatling "0.7.4" :exclusions [io.gatling/gatling-charts
+                 [clj-gatling "0.7.5" :exclusions [io.gatling/gatling-charts
                                                    io.gatling.highcharts/gatling-charts-highcharts]]]
   :aot [clojider-lambda.core])
 
