@@ -11,6 +11,7 @@
     (println "Running simulation with config" input)
     (let [result (run-simulation
                    (map #(eval (read-string %)) (:scenarios input))
+                   (eval (read-string (:simulation input)))
                    (:users input)
                    (:options input))]
       (println "Returning result" result)
